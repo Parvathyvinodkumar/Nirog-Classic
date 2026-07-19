@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nirog Health - Sign Up</title>
+    <style>
+        /* Modern Reset and Fonts */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #a8b2d1; /* Matches the grayish-blue background of reference */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Main Card Container */
+        .main-card {
+            display: flex;
+            width: 900px;
+            height: 600px;
+            background: white;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        /* Left Side - Branding */
+        .left-panel {
+            flex: 1;
+            background-color: #b8c1ec; /* Soft lavender/blue panel */
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo-top {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            width: 50px;
+        }
+
+        .branding-text {
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            line-height: 1.4;
+            max-width: 220px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .illustration {
+            width: 85%;
+            max-width: 280px;
+            /* Using a drop shadow to give the logo a 3D feel like the 2nd image */
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+        }
+
+        /* Right Side - Form */
+        .right-panel {
+            flex: 1.2;
+            padding: 50px 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: #1a202c;
+            font-weight: 700;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: 100%;
+            border: none;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 10px 0;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-bottom: 2px solid #5a67d8;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            background-color: #5a67d8;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 25px;
+            box-shadow: 0 4px 12px rgba(90, 103, 216, 0.3);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #4c51bf;
+            transform: translateY(-2px);
+        }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.95rem;
+            color: #718096;
+        }
+
+        .footer-link a {
+            color: #5a67d8;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Shake and Error Styling */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        .input-error {
+            animation: shake 0.3s ease-in-out;
+            border-bottom: 2px solid #f56565 !important;
+        }
+
+        input::placeholder {
+            color: #cbd5e0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-card">
+        <div class="left-panel">
+            <img src="nirog.png" alt="Nirog Logo" class="logo-top">
+            
+            <p class="branding-text">We at Nirog are always fully focused on helping you.</p>
+            
+            <img src="nirog.png" alt="Medical Illustration" class="illustration">
+        </div>
+
+        <div class="right-panel">
+            <h2>Create Account</h2>
+            
+            <form id="patientform" onsubmit="return validateForm(event)">
+                <div class="input-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name"  required>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email"  required>
+                </div>
+
+                <div class="input-group">
+                    <label for="phone">Phone Number:</label>
+                    <input type="text" id="phone" name="phone" maxlength="10"  required>
+                </div>
+
+                <div class="input-group">
+                    <label for="pswrd">Password:</label>
+                    <input type="password" id="pswrd"  required>
+                </div>
+
+                <button type="button" class="btn-submit" onclick="window.location.href='home.html';">  Create Account </button>
+            </form>
+
+            <p class="footer-link">Already have an Account? <a href="login.html">Log in</a></p>
+        </div>
+    </div>
+
+    <script>
+        function validateForm(event) {
+            const phone = document.getElementById("phone");
+            const email = document.getElementById("email");
+            
+            // Pattern for exactly 10 digits
+            const phonePattern = /^\d{10}$/;
+            
+            // Pattern for email ending in @somethingmail.com (covers gmail, hotmail, email, etc.)
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]*mail\.com$/;
+
+            let isValid = true;
+
+            // Reset styles
+            phone.classList.remove("input-error");
+            email.classList.remove("input-error");
+
+            // Validate Phone
+            if (!phonePattern.test(phone.value)) {
+                phone.classList.add("input-error");
+                isValid = false;
+            }
+
+            // Validate Email Suffix
+            if (!emailPattern.test(email.value)) {
+                email.classList.add("input-error");
+                isValid = false;
+            }
+
+            if (!isValid) {
+                // Remove shake class after animation so it can trigger again
+                setTimeout(() => {
+                    phone.classList.remove("input-error");
+                    email.classList.remove("input-error");
+                }, 400);
+
+                event.preventDefault();
+                return false;
+            }
+
+            // If everything is correct
+            alert("Welcome to Nirog! Your account has been created.");
+            return true;
+        }
+    </script>
+</body>
+</html>

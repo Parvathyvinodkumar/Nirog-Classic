@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nirog AI | Enterprise Health Systems</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --accent: #7c3aed;
+            --success: #10b981;
+            --danger: #ef4444;
+            --glass: rgba(255, 255, 255, 0.9);
+            --bg: #0f172a;
+        }
+
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        /* The Premium Container */
+        #chatbot-container {
+            width: 100%;
+            max-width: 480px;
+            height: 90vh;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border-radius: 32px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            overflow: hidden;
+            position: relative;
+        }
+
+        header {
+            padding: 30px;
+            background: linear-gradient(to bottom, #ffffff, rgba(255,255,255,0));
+            text-align: center;
+        }
+
+        header h2 { margin: 0; font-size: 26px; color: var(--bg); font-weight: 800; letter-spacing: -1px; }
+        header p { margin: 5px 0 0; font-size: 14px; color: #64748b; }
+
+        .chatbox {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scrollbar-width: none;
+        }
+
+        /* Message Bubbles */
+        .message {
+            max-width: 85%;
+            padding: 16px 20px;
+            border-radius: 20px;
+            font-size: 15px;
+            line-height: 1.6;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bot-message {
+            background: white;
+            color: #334155;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            border: 1px solid #f1f5f9;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
+        }
+
+        /* Input Controls */
+        .controls {
+            padding: 25px;
+            background: white;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            background: #f8fafc;
+            padding: 8px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 12px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .btn-send {
+            background: var(--bg);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        /* Action Buttons Grid */
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .nav-btn {
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            background: white;
+            transition: 0.2s;
+        }
+
+        .nav-btn:hover { background: #f8fafc; transform: translateY(-2px); }
+
+        .btn-pdf {
+            grid-column: span 2;
+            background: var(--success);
+            color: white;
+            border: none;
+            display: none; /* Only show when analysis is ready */
+        }
+
+        .typing { font-size: 12px; color: var(--primary); font-weight: 600; display: none; padding: 0 30px 10px; }
+    </style>
+</head>
+<body>
+
+<div id="chatbot-container">
+    <header>
+        <h2>NIROG AI</h2>
+        <p>Advanced Clinical Intelligence</p>
+    </header>
+    
+    <div class="chatbox" id="chatbox">
+        <div class="message bot-message">
+            <b>System Initialized.</b><br>
+            Please describe your clinical symptoms. I will analyze the data and generate a professional PDF report for your physician.
+        </div>
+    </div>
+
+    <div id="typing" class="typing">AI ANALYZING BIOMETRIC DATA...</div>
+
+    <div class="controls">
+        <div class="input-group">
+            <input type="text" id="userInput" placeholder="e.g. Sharp chest pain, cough..." onkeypress="checkEnter(event)">
+            <button class="btn-send" onclick="processChat()">Send</button>
+        </div>
+
+        <div class="action-grid">
+            <a href="index.html" class="nav-btn">Home</a>
+            <a href="coordinates.html" class="nav-btn">Find ER</a>
+            <button id="pdfBtn" class="nav-btn btn-pdf" onclick="generatePDF()">Download Clinical Report (PDF)</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let symptoms = [];
+    let lastAnalysis = "";
+
+    function checkEnter(e) { if (e.key === 'Enter') processChat(); }
+
+    function processChat() {
+        const input = document.getElementById("userInput");
+        const val = input.value.trim();
+        if (!val) return;
+
+        appendMessage(val, "user-message");
+        input.value = "";
+
+        document.getElementById("typing").style.display = "block";
+
+        setTimeout(() => {
+            document.getElementById("typing").style.display = "none";
+            if (val.toLowerCase() === "done") {
+                if (symptoms.length > 0) performAnalysis();
+                else appendMessage("No symptoms logged. Please provide details.", "bot-message");
+            } else {
+                symptoms.push(val);
+                appendMessage("Symptom logged. Anything else? (Type <b>'done'</b> to finalize)", "bot-message");
+            }
+        }, 1000);
+    }
+
+    function appendMessage(text, type) {
+        const chatbox = document.getElementById("chatbox");
+        const div = document.createElement("div");
+        div.className = `message ${type}`;
+        div.innerHTML = text;
+        chatbox.appendChild(div);
+        chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    function performAnalysis() {
+        const spec = getSpecialization(symptoms);
+        const severity = getSeverity(symptoms);
+        
+        lastAnalysis = {
+            symptoms: symptoms.join(", "),
+            specialist: spec,
+            severity: severity,
+            date: new Date().toLocaleString()
+        };
+
+        const reportHTML = `
+            <b>Analysis Complete</b><br>
+            ━━━━━━━━━━━━━━<br>
+            <b>Target Specialist:</b> ${spec}<br>
+            <b>Urgency:</b> ${severity}<br><br>
+            Professional report is ready for download.
+        `;
+        
+        appendMessage(reportHTML, "bot-message");
+        document.getElementById("pdfBtn").style.display = "block";
+    }
+
+    function getSpecialization(list) {
+        const map = {
+            "Neurology": ["headache", "migraine", "seizure", "numbness"],
+            "Cardiology": ["chest pain", "breathless", "palpitations"],
+            "Orthopedics": ["bone", "joint", "back pain", "fracture"],
+            "Pulmonology": ["cough", "wheeze", "asthma"]
+        };
+        for (let s of list) {
+            for (let k in map) {
+                if (map[k].some(word => s.toLowerCase().includes(word))) return k;
+            }
+        }
+        return "General Medicine";
+    }
+
+    function getSeverity(list) {
+        const critical = ["chest pain", "difficulty breathing", "heavy bleeding"];
+        return list.some(s => critical.some(c => s.toLowerCase().includes(c))) ? "CRITICAL (Immediate Action)" : "Stable";
+    }
+
+    function generatePDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFontSize(22);
+        doc.setTextColor(37, 99, 235);
+        doc.text("NIROG AI - CLINICAL REPORT", 20, 30);
+        
+        doc.setFontSize(12);
+        doc.setTextColor(100);
+        doc.text(`Generated on: ${lastAnalysis.date}`, 20, 40);
+        
+        doc.setLineWidth(0.5);
+        doc.line(20, 45, 190, 45);
+
+        doc.setFontSize(14);
+        doc.setTextColor(0);
+        doc.text("Patient Symptoms:", 20, 60);
+        doc.setFontSize(12);
+        doc.text(lastAnalysis.symptoms, 25, 70);
+
+        doc.setFontSize(14);
+        doc.text("AI Diagnostic Triage:", 20, 90);
+        doc.setFontSize(12);
+        doc.text(`Recommended Specialist: ${lastAnalysis.specialist}`, 25, 100);
+        doc.text(`Urgency Level: ${lastAnalysis.severity}`, 25, 110);
+
+        doc.setTextColor(150);
+        doc.setFontSize(10);
+        doc.text("Disclaimer: This report is generated by AI for triage purposes only.", 20, 150);
+
+        doc.save("Nirog_Health_Report.pdf");
+    }
+</script>
+</body>
+</html>

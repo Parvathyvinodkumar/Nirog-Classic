@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nirog | Kerala Medical Directory Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --primary: #2563eb;
+            --danger: #ef4444;
+            --success: #10b981;
+            --bg-light: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-main); display: flex; min-height: 100vh; }
+
+        /* --- SIDEBAR --- */
+        nav.sidebar { width: var(--sidebar-width); background: #0f172a; color: white; display: flex; flex-direction: column; position: fixed; height: 100vh; padding: 24px; }
+        .sidebar-brand { font-size: 1.5rem; font-weight: 700; margin-bottom: 40px; display: flex; align-items: center; gap: 12px; }
+        .nav-link { padding: 12px 16px; color: #94a3b8; text-decoration: none; border-radius: 8px; margin-bottom: 8px; transition: 0.3s; display: flex; align-items: center; gap: 12px; }
+        .nav-link.active, .nav-link:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        /* --- MAIN CONTENT --- */
+        main { margin-left: var(--sidebar-width); flex: 1; padding: 40px; }
+        .header-area { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+        .controls-group { display: flex; gap: 10px; align-items: center; }
+
+        /* --- STAT CARDS --- */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 32px; }
+        .stat-card { background: white; padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
+        .stat-card span { color: var(--text-muted); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; }
+        .stat-card h3 { font-size: 1.5rem; margin-top: 5px; }
+
+        /* --- TABLE AREA --- */
+        .content-card { background: white; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .table-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #fff; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--bg-light); padding: 14px 24px; font-size: 0.75rem; color: var(--text-muted); text-align: left; }
+        td { padding: 14px 24px; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+        
+        /* --- ACTION BUTTONS --- */
+        .btn { padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; border: none; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-danger { background: #fee2e2; color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: white; }
+        .btn-outline { background: white; border: 1px solid var(--border); }
+        .action-icon { cursor: pointer; padding: 6px; border-radius: 4px; transition: 0.2s; }
+        .action-icon:hover { background: #f1f5f9; }
+        .edit-icn { color: var(--primary); }
+        .del-icn { color: var(--danger); }
+
+        /* --- MODAL --- */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: white; padding: 30px; border-radius: 12px; width: 450px; max-height: 90vh; overflow-y: auto; }
+        .modal-header { margin-bottom: 20px; display: flex; justify-content: space-between; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.8rem; margin-bottom: 5px; font-weight: 600; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; }
+
+        .search-box, .filter-select { padding: 10px; border: 1px solid var(--border); border-radius: 6px; outline: none; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; background: #e0f2fe; color: #0369a1; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-brand"><i class="fas fa-heart-pulse"></i> Nirog</div>
+        <a href="#" class="nav-link active"><i class="fas fa-columns"></i> Dashboard</a>
+        <a href="#" class="nav-link"><i class="fas fa-user-md"></i> Doctors</a>
+        <a href="#" class="nav-link"><i class="fas fa-hospital"></i> Hospitals</a>
+    </nav>
+
+    <main>
+        <div class="header-area">
+            <div>
+                <h2>Kerala Medical Directory</h2>
+                <p style="color: var(--text-muted);">Manage doctors and hospital records.</p>
+            </div>
+            <div class="controls-group">
+                <button class="btn btn-outline" onclick="removeHospital()"><i class="fas fa-minus-circle"></i> Remove Hospital</button>
+                <button class="btn btn-outline" onclick="addNewHospital()"><i class="fas fa-hospital"></i> Add Hospital</button>
+                <button class="btn btn-primary" onclick="openDoctorModal()"><i class="fas fa-plus"></i> Add Doctor</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><span>Total Doctors</span><h3 id="count-total">0</h3></div>
+            <div class="stat-card"><span>Hospitals</span><h3 id="count-hospitals">0</h3></div>
+            <div class="stat-card"><span>Database</span><h3 style="color: var(--success);">Local Live</h3></div>
+        </div>
+
+        <div class="content-card">
+            <div class="table-header">
+                <div class="controls-group">
+                    <input type="text" id="searchInput" class="search-box" placeholder="Search records..." onkeyup="renderTable()">
+                    <select id="hospitalFilter" class="filter-select" onchange="renderTable()">
+                        <option value="all">All Hospitals</option>
+                    </select>
+                </div>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Doctor Name</th>
+                        <th>Department</th>
+                        <th>Hospital</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="doctors-table-body"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <div id="doctorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Doctor</h3>
+                <i class="fas fa-times" style="cursor:pointer" onclick="closeModal()"></i>
+            </div>
+            <input type="hidden" id="editDoctorIndex">
+            <input type="hidden" id="editDoctorHospital">
+            
+            <div class="form-group">
+                <label>Doctor Name</label>
+                <input type="text" id="docName" class="form-control" placeholder="Dr. Name">
+            </div>
+            <div class="form-group">
+                <label>Hospital</label>
+                <select id="docHospital" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label>Department</label>
+                <input type="text" id="docDept" class="form-control" placeholder="e.g. Cardiology">
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <input type="text" id="docRole" class="form-control" placeholder="e.g. HOD">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="docEmail" class="form-control" placeholder="email@hospital.gov.in">
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="saveDoctor()">Save Doctor Details</button>
+        </div>
+    </div>
+
+    <script>
+        // Full Data Restore
+        const defaultData = {
+            "GMC Thiruvananthapuram": [
+                { name: "Dr. Mathew Thomas", dept: "General Medicine", role: "Professor & HOD", email: "medicine@tmc.kerala.gov.in" },
+                { name: "Dr. R. C. Sreekumar", dept: "General Surgery", role: "Professor & HOD", email: "surgery@tmc.kerala.gov.in" },
+                { name: "Dr. Shobha Kumar", dept: "Paediatrics", role: "Professor & HOD", email: "paediatrics@tmc.kerala.gov.in" },
+                { name: "Dr. Bindu Gomathy", dept: "Obstetrics & Gynaecology", role: "Professor & HOD", email: "obg@tmc.kerala.gov.in" },
+                { name: "Dr. S. Sankar", dept: "Orthopaedics", role: "Professor & HOD", email: "ortho@tmc.kerala.gov.in" },
+                { name: "Dr. Sunila Mani", dept: "Cardiology", role: "Professor & HOD", email: "cardio@tmc.kerala.gov.in" },
+                { name: "Dr. Ajith Kumar", dept: "Neurology", role: "Professor & HOD", email: "neuro@tmc.kerala.gov.in" },
+                { name: "Dr. Linette J. Morris", dept: "Radiotherapy", role: "Professor & HOD", email: "radiotherapy@tmc.kerala.gov.in" },
+                { name: "Dr. Abdul Latheef", dept: "Dermatology", role: "Professor & HOD", email: "dermatology@tmc.kerala.gov.in" },
+                { name: "Dr. Elizabeth Joseph", dept: "Anesthesiology", role: "Professor & HOD", email: "anesthesia@tmc.kerala.gov.in" },
+                { name: "Dr. K. Mahadevan", dept: "Ophthalmology", role: "Professor & HOD", email: "eye@tmc.kerala.gov.in" },
+                { name: "Dr. Sreedevi", dept: "Anatomy", role: "Professor & HOD", email: "anatomy@tmc.kerala.gov.in" },
+                { name: "Dr. Lalitha", dept: "Physiology", role: "Professor & HOD", email: "physiology@tmc.kerala.gov.in" },
+                { name: "Dr. Geetha", dept: "Biochemistry", role: "Professor & HOD", email: "biochem@tmc.kerala.gov.in" },
+                { name: "Dr. K. S. Shaji", dept: "Psychiatry", role: "Professor & HOD", email: "psychiatry@tmc.kerala.gov.in" },
+                { name: "Dr. B. Padmakumar", dept: "Infectious Diseases", role: "Professor & HOD", email: "id@tmc.kerala.gov.in" },
+                { name: "Dr. Beena", dept: "Microbiology", role: "Professor & HOD", email: "micro@tmc.kerala.gov.in" },
+                { name: "Dr. K. L. Sarada Devi", dept: "Pathology", role: "Professor & HOD", email: "patho@tmc.kerala.gov.in" },
+                { name: "Dr. Unmesh", dept: "Forensic Medicine", role: "Professor & HOD", email: "forensic@tmc.kerala.gov.in" },
+                { name: "Dr. Sanjeev", dept: "Community Medicine", role: "Professor & HOD", email: "community@tmc.kerala.gov.in" },
+                { name: "Dr. Noble Gracious", dept: "Nephrology", role: "Professor & HOD", email: "nephro@tmc.kerala.gov.in" },
+                { name: "Dr. Harikumaran Nair", dept: "Urology", role: "Professor & HOD", email: "urology@tmc.kerala.gov.in" },
+                { name: "Dr. Rajasree", dept: "ENT", role: "Professor & HOD", email: "ent@tmc.kerala.gov.in" },
+                { name: "Dr. Thomas Iype", dept: "Neurology", role: "Professor & HOD", email: "neuro2@tmc.kerala.gov.in" },
+                { name: "Dr. V. L. Jayaprakash", dept: "Respiratory Medicine", role: "Professor & HOD", email: "resp@tmc.kerala.gov.in" },
+                { name: "Dr. Premalatha", dept: "Physical Med. & Rehab", role: "Professor & HOD", email: "pmr@tmc.kerala.gov.in" },
+                { name: "Dr. Krishna Mohan", dept: "Gastroenterology", role: "Professor & HOD", email: "gastro@tmc.kerala.gov.in" },
+                { name: "Dr. Manju", dept: "Endocrinology", role: "Professor & HOD", email: "endo@tmc.kerala.gov.in" },
+                { name: "Dr. Ramesh", dept: "Neuro Surgery", role: "Professor & HOD", email: "neurosurg@tmc.kerala.gov.in" },
+                { name: "Dr. Sunil", dept: "Cardio-Thoracic Surgery", role: "Professor & HOD", email: "cvts@tmc.kerala.gov.in" }
+            ],
+            "Amrita Hospital Kochi": [
+                { name: "Dr. Prem Nair", dept: "Gastroenterology", role: "Medical Director", email: "premnair@aims.amrita.edu" },
+                { name: "Dr. K. U. Natarajan", dept: "Cardiology", role: "Professor & HOD", email: "cardiology@aims.amrita.edu" },
+                { name: "Dr. Sudhindran S.", dept: "Gastrointestinal Surgery", role: "Professor & HOD", email: "gisurgery@aims.amrita.edu" },
+                { name: "Dr. Sanjeev K. Singh", dept: "Hospital Administration", role: "Medical Superintendent", email: "ms@aims.amrita.edu" },
+                { name: "Dr. P. Ramkumar", dept: "Orthopaedics", role: "Professor & HOD", email: "ortho@aims.amrita.edu" },
+                { name: "Dr. Vivek Kumar", dept: "Neurology", role: "Professor & HOD", email: "neuro@aims.amrita.edu" },
+                { name: "Dr. Balagopal V. V.", dept: "General Surgery", role: "Professor & HOD", email: "surgery@aims.amrita.edu" },
+                { name: "Dr. C. Jayakumar", dept: "Paediatrics", role: "Professor & HOD", email: "paediatrics@aims.amrita.edu" },
+                { name: "Dr. Radhamany K.", dept: "Obstetrics & Gynaecology", role: "Professor & HOD", email: "obg@aims.amrita.edu" },
+                { name: "Dr. Ashoke K. Singh", dept: "Endocrinology", role: "Senior Consultant", email: "endo@aims.amrita.edu" },
+                { name: "Dr. Gopalakrishnan", dept: "Ophthalmology", role: "Professor & HOD", email: "eye@aims.amrita.edu" },
+                { name: "Dr. M. G. K. Pillai", dept: "General Medicine", role: "Professor & HOD", email: "genmed@aims.amrita.edu" },
+                { name: "Dr. S. K. Ramaswamy", dept: "Dermatology", role: "Professor & HOD", email: "derm@aims.amrita.edu" },
+                { name: "Dr. Lakshmi S.", dept: "Anesthesia", role: "Professor & HOD", email: "anesthesia@aims.amrita.edu" },
+                { name: "Dr. Harish Kumar", dept: "Endocrinology", role: "Professor & HOD", email: "endo@aims.amrita.edu" }
+            ],
+            "GMC Kozhikode": [
+                { name: "Dr. Pratap Somnath", dept: "General Medicine", role: "Professor & HOD", email: "medicine@gmccalicut.gov.in" },
+                { name: "Dr. Sreejayan MP", dept: "General Surgery", role: "Professor & HOD", email: "surgery@gmccalicut.gov.in" },
+                { name: "Dr. Mohandas Nair", dept: "Paediatrics", role: "Professor & HOD", email: "paediatrics@gmccalicut.gov.in" },
+                { name: "Dr. Mini CH", dept: "Obstetrics & Gynaecology", role: "Professor & HOD", email: "obg@gmccalicut.gov.in" },
+                { name: "Dr. Jacob Mathew", dept: "Orthopaedics", role: "Professor & HOD", email: "ortho@gmccalicut.gov.in" },
+                { name: "Dr. Sajeev CG", dept: "Cardiology", role: "Professor & HOD", email: "cardio@gmccalicut.gov.in" },
+                { name: "Dr. James Jose", dept: "Neurology", role: "Professor & HOD", email: "neuro@gmccalicut.gov.in" },
+                { name: "Dr. Beena KV", dept: "Radiotherapy", role: "Professor & HOD", email: "radiotherapy@gmccalicut.gov.in" },
+                { name: "Dr. Sarita S", dept: "Dermatology", role: "Professor & HOD", email: "dermatology@gmccalicut.gov.in" },
+                { name: "Dr. Sheela Sivan", dept: "Anesthesiology", role: "Professor & HOD", email: "anesthesia@gmccalicut.gov.in" },
+                { name: "Dr. Bindu Thampi", dept: "Ophthalmology", role: "Professor & HOD", email: "eye@gmccalicut.gov.in" },
+                { name: "Dr. Roshni PR", dept: "Anatomy", role: "Professor & HOD", email: "anatomy@gmccalicut.gov.in" },
+                { name: "Dr. Geetha S", dept: "Physiology", role: "Professor & HOD", email: "physiology@gmccalicut.gov.in" },
+                { name: "Dr. Shajee PV", dept: "Biochemistry", role: "Professor & HOD", email: "biochem@gmccalicut.gov.in" },
+                { name: "Dr. PN Suresh Kumar", dept: "Psychiatry", role: "Professor & HOD", email: "psychiatry@gmccalicut.gov.in" },
+                { name: "Dr. Chandni R", dept: "Emergency Medicine", role: "Professor & HOD", email: "emergency@gmccalicut.gov.in" },
+                { name: "Dr. Beena Philomina", dept: "Microbiology", role: "Professor & HOD", email: "micro@gmccalicut.gov.in" },
+                { name: "Dr. K P Aravindan", dept: "Pathology", role: "Professor Emeritus", email: "patho@gmccalicut.gov.in" },
+                { name: "Dr. Shirley Vasu", dept: "Forensic Medicine", role: "Professor & HOD", email: "forensic@gmccalicut.gov.in" },
+                { name: "Dr. Jayakrishnan T", dept: "Community Medicine", role: "Professor & HOD", email: "community@gmccalicut.gov.in" }
+            ]
+        };
+
+        let rawData = JSON.parse(localStorage.getItem('nirogData')) || defaultData;
+
+        function saveData() {
+            localStorage.setItem('nirogData', JSON.stringify(rawData));
+            updateStats();
+        }
+
+        function updateStats() {
+            const hospitals = Object.keys(rawData);
+            let docCount = 0;
+            const filter = document.getElementById("hospitalFilter");
+            const docHospDropdown = document.getElementById("docHospital");
+            const currentFilter = filter.value;
+
+            filter.innerHTML = '<option value="all">All Hospitals</option>';
+            docHospDropdown.innerHTML = '';
+
+            hospitals.sort().forEach(h => {
+                docCount += rawData[h].length;
+                filter.innerHTML += `<option value="${h}">${h}</option>`;
+                docHospDropdown.innerHTML += `<option value="${h}">${h}</option>`;
+            });
+
+            document.getElementById("count-total").innerText = docCount;
+            document.getElementById("count-hospitals").innerText = hospitals.length;
+            filter.value = currentFilter || "all";
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById("doctors-table-body");
+            const filter = document.getElementById("hospitalFilter").value;
+            const search = document.getElementById("searchInput").value.toLowerCase();
+            tbody.innerHTML = "";
+
+            for (const [hospital, doctors] of Object.entries(rawData)) {
+                if (filter !== "all" && filter !== hospital) continue;
+
+                doctors.forEach((doc, index) => {
+                    if (search && !doc.name.toLowerCase().includes(search) && !doc.dept.toLowerCase().includes(search)) return;
+
+                    const row = `
+                        <tr>
+                            <td style="font-weight: 600;">${doc.name}</td>
+                            <td><span class="badge">${doc.dept}</span></td>
+                            <td><span class="hospital-tag">${hospital}</span></td>
+                            <td>${doc.role}</td>
+                            <td>
+                                <i class="fas fa-edit action-icon edit-icn" onclick="editDoctor('${hospital}', ${index})"></i>
+                                <i class="fas fa-trash action-icon del-icn" onclick="deleteDoctor('${hospital}', ${index})"></i>
+                            </td>
+                        </tr>`;
+                    tbody.innerHTML += row;
+                });
+            }
+        }
+
+        /* --- HOSPITAL LOGIC --- */
+        function addNewHospital() {
+            const name = prompt("Enter Hospital Name:");
+            if (name && !rawData[name]) {
+                rawData[name] = [];
+                saveData();
+                renderTable();
+            } else if (rawData[name]) {
+                alert("Hospital already exists.");
+            }
+        }
+
+        function removeHospital() {
+            const name = document.getElementById("hospitalFilter").value;
+            if (name === "all") return alert("Please select a specific hospital in the filter first to delete it.");
+            if (confirm(`Are you sure you want to delete ${name} and all its doctors?`)) {
+                delete rawData[name];
+                document.getElementById("hospitalFilter").value = "all";
+                saveData();
+                renderTable();
+            }
+        }
+
+        /* --- DOCTOR LOGIC --- */
+        function openDoctorModal() {
+            document.getElementById("modalTitle").innerText = "Add New Doctor";
+            document.getElementById("editDoctorIndex").value = "";
+            document.getElementById("docName").value = "";
+            document.getElementById("docDept").value = "";
+            document.getElementById("docRole").value = "";
+            document.getElementById("docEmail").value = "";
+            document.getElementById("doctorModal").style.display = "flex";
+        }
+
+        function closeModal() { document.getElementById("doctorModal").style.display = "none"; }
+
+        function saveDoctor() {
+            const hospital = document.getElementById("docHospital").value;
+            const index = document.getElementById("editDoctorIndex").value;
+            const oldHospital = document.getElementById("editDoctorHospital").value;
+
+            const docData = {
+                name: document.getElementById("docName").value,
+                dept: document.getElementById("docDept").value,
+                role: document.getElementById("docRole").value,
+                email: document.getElementById("docEmail").value
+            };
+
+            if (!docData.name || !hospital) return alert("Name and Hospital are required");
+
+            if (index !== "") {
+                if(oldHospital !== hospital) {
+                    rawData[oldHospital].splice(index, 1);
+                    rawData[hospital].push(docData);
+                } else {
+                    rawData[hospital][index] = docData;
+                }
+            } else {
+                rawData[hospital].push(docData);
+            }
+
+            saveData();
+            renderTable();
+            closeModal();
+        }
+
+        function editDoctor(hospital, index) {
+            const doc = rawData[hospital][index];
+            document.getElementById("modalTitle").innerText = "Edit Doctor Details";
+            document.getElementById("docName").value = doc.name;
+            document.getElementById("docHospital").value = hospital;
+            document.getElementById("docDept").value = doc.dept;
+            document.getElementById("docRole").value = doc.role;
+            document.getElementById("docEmail").value = doc.email;
+            document.getElementById("editDoctorIndex").value = index;
+            document.getElementById("editDoctorHospital").value = hospital;
+            document.getElementById("doctorModal").style.display = "flex";
+        }
+
+        function deleteDoctor(hospital, index) {
+            if (confirm("Remove this doctor from records?")) {
+                rawData[hospital].splice(index, 1);
+                saveData();
+                renderTable();
+            }
+        }
+
+        window.onclick = (event) => {
+            const modal = document.getElementById("doctorModal");
+            if (event.target == modal) closeModal();
+        };
+
+        window.onload = () => { updateStats(); renderTable(); };
+    </script>
+</body>
+</html>

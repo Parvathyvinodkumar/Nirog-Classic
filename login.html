@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nirog Health Service - Login</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Updated to dist.png with a dark overlay for better text readability */
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),  url('dist.png') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+        }
+
+        .login-container {
+            /* Semi-transparent white for a frosted glass look */
+            background: rgba(255, 255, 255, 0.9);
+            width: 90%;
+            max-width: 420px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            backdrop-filter: blur(8px); /* Blurs the map behind the form */
+        }
+
+        .logo-container img {
+            width: 160px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #00738b;
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        label {
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        input {
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #00bcd4;
+            background: #fff;
+            box-shadow: 0 0 8px rgba(0, 188, 212, 0.2);
+        }
+
+        button {
+            padding: 13px;
+            background-color: #00738b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #005a6d;
+        }
+
+        .footer-text {
+            margin-top: 25px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .footer-text a {
+            color: #00738b;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        /* Validation Animation */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            50% { transform: translateX(8px); }
+            75% { transform: translateX(-8px); }
+            100% { transform: translateX(0); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+            border: 2px solid #ff4d4d !important;
+        }
+    </style>
+</head>
+<body>
+
+    <section class="login-container">
+        <div class="logo-container">
+            <img src="nirog.png" alt="Nirog Logo">
+        </div>
+        
+        <h2>Patient Login</h2>
+
+        <form id="loginForm" onsubmit="return validateLogin(event)">
+            <label for="email">Email Address</label>
+            <input type="email" id="email"  required>
+
+            <label for="phone">Phone Number</label>
+            <input type="text" id="phone"  maxlength="10" required>
+
+            <label for="pswrd">Password</label>
+            <input type="password" id="pswrd"  required>
+
+            <button type="submit"><a href="home.html">Log In</a></button>
+        </form>
+
+        <p class="footer-text">
+            Don't have an account? <a href="sign-in.html">Sign up here</a>
+        </p>
+    </section>
+
+    <script>
+        function validateLogin(event) {
+            let phone = document.getElementById("phone");
+            let email = document.getElementById("email");
+            
+            // Pattern: must end in @...mail.com (gmail, hotmail, etc)
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]*mail\.com$/;
+            const phonePattern = /^\d{10}$/;
+
+            let isValid = true;
+
+            // Reset shake if present
+            phone.classList.remove("shake");
+            email.classList.remove("shake");
+
+            if (!phonePattern.test(phone.value)) {
+                phone.classList.add("shake");
+                isValid = false;
+            }
+
+            if (!emailPattern.test(email.value)) {
+                email.classList.add("shake");
+                isValid = false;
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+                return false;
+            }
+
+            alert("Logging in...");
+            return true;
+        }
+    </script>
+</body>
+</html>

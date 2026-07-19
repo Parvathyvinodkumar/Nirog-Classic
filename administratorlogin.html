@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Admin Gateway</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Animated Background Gradient */
+            background: linear-gradient(-45deg, #0f172a, #1e293b, #312e81, #1e1b4b);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glassmorphism Container */
+        .login-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            width: 450px;
+            padding: 40px;
+            color: white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 10;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header h1 {
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Input Styles */
+        .input-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+            transition: 0.3s;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 14px 15px 14px 45px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+
+        input:focus + i {
+            color: var(--accent);
+        }
+
+        /* Password Toggle */
+        #togglePass {
+            position: absolute;
+            right: 15px;
+            left: auto;
+            cursor: pointer;
+            pointer-events: all;
+        }
+
+        /* Advanced Button */
+        button {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.5);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Error Message Overlay */
+        .error-msg {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+        }
+
+        /* Decorative Floating Circles */
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(to right, #6366f1, #a855f7);
+            filter: blur(80px);
+            z-index: 1;
+            opacity: 0.4;
+        }
+
+        .c1 { width: 300px; height: 300px; top: -100px; left: -100px; }
+        .c2 { width: 250px; height: 250px; bottom: -50px; right: -50px; background: #3b82f6; }
+
+    </style>
+</head>
+<body>
+
+    <div class="circle c1"></div>
+    <div class="circle c2"></div>
+
+    <div class="login-card" id="card">
+        <div class="header">
+            <div class="logo-icon"><i class="fas fa-shield-halved"></i></div>
+            <h1>Control Panel</h1>
+            <p>Authorized Personnel Only</p>
+        </div>
+
+        <div id="errorBox" class="error-msg">
+            <i class="fas fa-triangle-exclamation"></i> Access Denied. Check credentials.
+        </div>
+
+        <form id="loginForm">
+            <div class="input-box">
+                <i class="fas fa-user-shield"></i>
+                <input type="text" id="admin_id" placeholder="Administrator ID" required autocomplete="off">
+            </div>
+
+            <div class="input-box">
+                <i class="fas fa-key"></i>
+                <input type="password" id="password" placeholder="Secure Password" required>
+                <i class="fas fa-eye" id="togglePass"></i>
+            </div>
+
+            <button type="submit" id="submitBtn">
+                <span id="btnText">Verify Identity</span>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // Password Visibility Toggle
+        const togglePass = document.getElementById('togglePass');
+        const passInput = document.getElementById('password');
+
+        togglePass.addEventListener('click', () => {
+            const type = passInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passInput.setAttribute('type', type);
+            togglePass.classList.toggle('fa-eye-slash');
+        });
+
+        // Form Logic
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('admin_id').value;
+            const pass = document.getElementById('password').value;
+            const btn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const card = document.getElementById('card');
+            const errorBox = document.getElementById('errorBox');
+
+            // Reset UI
+            errorBox.style.display = 'none';
+
+            if (id === 'admin' && pass === 'admin@123') {
+                // Success State
+                btn.style.background = '#10b981';
+                btnText.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Accessing...';
+                
+                setTimeout(() => {
+                    window.location.href = 'admrad.html';
+                }, 1000);
+            } else {
+                // Failure Shake
+                errorBox.style.display = 'block';
+                card.animate([
+                    { transform: 'translateX(0px)' },
+                    { transform: 'translateX(-10px)' },
+                    { transform: 'translateX(10px)' },
+                    { transform: 'translateX(0px)' }
+                ], { duration: 250, iterations: 2 });
+            }
+        });
+    </script>
+</body>
+</html>

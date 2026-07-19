@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Emergency Info</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+        .info-box {
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px solid #d9534f;
+            background-color: #f9d6d5;
+            display: none;
+            border-radius: 8px;
+        }
+        h2 {
+            color: #d9534f;
+        }
+        iframe {
+            width: 100%;
+            height: 315px;
+            border: none;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Select a Medical Emergency:</h2>
+
+    <form>
+        <label><input type="radio" name="emerg" value="allergic_reaction"> Allergic Reaction</label><br>
+        <label><input type="radio" name="emerg" value="burns"> Burns</label><br>
+        <label><input type="radio" name="emerg" value="heart_attack"> Heart Attack</label><br>
+        <label><input type="radio" name="emerg" value="stroke"> Stroke</label><br>
+        <label><input type="radio" name="emerg" value="choking"> Choking</label><br>
+        <label><input type="radio" name="emerg" value="severe_bleeding"> Severe Bleeding</label><br>
+        <label><input type="radio" name="emerg" value="seizure"> Seizure</label><br>
+    </form>
+
+    <div class="info-box" id="infoBox">
+        <h3 id="infoTitle"></h3>
+        <p id="infoDetails"></p>
+        <iframe id="infoVideo" src="" allowfullscreen></iframe>
+    </div>
+
+    <script>
+        const radioButtons = document.querySelectorAll('input[name="emerg"]');
+        const infoBox = document.getElementById("infoBox");
+        const infoTitle = document.getElementById("infoTitle");
+        const infoDetails = document.getElementById("infoDetails");
+        const infoVideo = document.getElementById("infoVideo");
+
+        const emergencies = {
+            "allergic_reaction": {
+                title: "Allergic Reaction",
+                details: "🔴 Symptoms: Swelling, breathing difficulty, rash, dizziness.\n✅ Action: Use an epinephrine injector (EpiPen) if available and seek emergency help.",
+                video: "https://www.youtube.com/embed/yqaLKuhMCPw"
+            },
+            "burns": {
+                title: "Burns",
+                details: "🔴 Symptoms: Redness, blistering, severe pain.\n✅ Action: Cool the burn under running water for 10+ minutes, cover with a sterile cloth, and avoid ice.",
+                video: "https://www.youtube.com/embed/v2mY1h0BdTw"
+            },
+            "heart_attack": {
+                title: "Heart Attack",
+                details: "🔴 Symptoms: Chest pain, shortness of breath, nausea, sweating.\n✅ Action: Call emergency services, give aspirin (if not allergic), and keep the person calm.",
+                video: "https://www.youtube.com/embed/gDwt7dD3awc"
+            },
+            "stroke": {
+                title: "Stroke",
+                details: "🔴 Symptoms: Sudden numbness/weakness on one side, slurred speech.\n✅ Action: Use the FAST test (Face, Arms, Speech, Time) and seek immediate help.",
+                video: "https://www.youtube.com/embed/EYUDS3wVWEk"
+            },
+            "choking": {
+                title: "Choking",
+                details: "🔴 Symptoms: Unable to speak or breathe.\n✅ Action: Perform the Heimlich maneuver to clear the airway.",
+                video: "https://www.youtube.com/embed/GymXjJJ7Ugo"
+            },
+            "severe_bleeding": {
+                title: "Severe Bleeding",
+                details: "🔴 Symptoms: Uncontrolled bleeding.\n✅ Action: Apply direct pressure and elevate the wound to slow bleeding.",
+                video: "https://www.youtube.com/embed/8pTaqY40-Rs"
+            },
+            "seizure": {
+                title: "Seizure",
+                details: "🔴 Symptoms: Shaking, loss of consciousness.\n✅ Action: Protect the person from injury, place them on their side, and do not restrain them.",
+                video: "https://www.youtube.com/embed/hLeSlQS9g2c"
+            }
+        };
+
+        radioButtons.forEach(radio => {
+            radio.addEventListener("change", function () {
+                if (this.checked) {
+                    infoTitle.textContent = emergencies[this.value].title;
+                    infoDetails.innerHTML = emergencies[this.value].details.replace(/\n/g, '<br>'); // Preserve line breaks
+                    infoVideo.src = emergencies[this.value].video;
+                    infoBox.style.display = "block";
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+

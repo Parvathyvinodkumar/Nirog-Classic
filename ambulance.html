@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Medical Services | Premium Dispatch</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #ef4444;
+            --success-green: #10b981;
+            --glass-white: rgba(255, 255, 255, 0.9);
+            --overlay-dark: rgba(44, 52, 69, 0.75);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* High-end medical background with a professional dark overlay */
+            background: linear-gradient(var(--overlay-dark), var(--overlay-dark)), 
+                        url('https://medulance.com/assets/images/f-kit.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--glass-white);
+            /* Frosty glass effect */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 50px 40px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Red accent bar at the top */
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--primary-red);
+        }
+
+        .icon-container {
+            width: 64px;
+            height: 64px;
+            background: #fee2e2;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        h3 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        p.subtitle {
+            color: #475569;
+            margin-bottom: 32px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .radio-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .radio-option {
+            position: relative;
+        }
+
+        .radio-option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        .radio-label {
+            display: block;
+            padding: 16px;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            color: #64748b;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .radio-option input:checked + .radio-label {
+            border-color: var(--primary-red);
+            background-color: #fef2f2;
+            color: var(--primary-red);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.1);
+        }
+
+        #ambulancestatus {
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .status-active {
+            background-color: #ecfdf5;
+            color: #065f46;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            border: 1px solid #a7f3d0;
+            animation: slideIn 0.4s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .home-button {
+            display: inline-block;
+            margin-top: 30px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .home-button:hover {
+            color: #0f172a;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="icon-container">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h5v5c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"></path>
+            </svg>
+        </div>
+
+        <h3>Ambulance Dispatch</h3>
+        <p class="subtitle">Verified medical assistance is available 24/7. Select an option to proceed with your request.</p>
+        
+        <div class="radio-container">
+            <div class="radio-option">
+                <input type="radio" id="yes" name="ambulance" value="yes" onclick="updateStatus()">
+                <label for="yes" class="radio-label">Request Now</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" id="no" name="ambulance" value="no" onclick="updateStatus()">
+                <label for="no" class="radio-label">Not Needed</label>
+            </div>
+        </div>
+
+        <div id="ambulancestatus"></div>
+        
+        <a href="home.html" class="home-button">← Back to Safety Dashboard</a>
+    </div>
+
+    <script>
+        function updateStatus() {
+            const selectedValue = document.querySelector('input[name="ambulance"]:checked').value;
+            const statusBox = document.getElementById("ambulancestatus");
+
+            if (selectedValue === "yes") {
+                statusBox.innerHTML = "<div class='status-active'><span>🚑</span> Dispatch Confirmed: Help is on the way</div>";
+            } else {
+                statusBox.innerHTML = "";
+            }
+        }
+    </script>
+
+</body>
+</html>

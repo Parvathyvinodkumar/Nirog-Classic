@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Directory | Amrita Hospital, Kochi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Amrita Brand Colors */
+            --amrita-blue: #004d8c;
+            --amrita-accent: #b4975a;
+            --bg-slate: #f8fafc;
+            --text-dark: #0f172a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-slate);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* --- Home Icon Styles --- */
+        .home-btn {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            background: var(--amrita-blue);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transition: 0.3s;
+        }
+
+        .home-btn:hover {
+            background: var(--amrita-accent);
+            transform: scale(1.1);
+        }
+
+        header {
+            background: white;
+            padding: 20px 5%;
+            border-bottom: 4px solid var(--amrita-blue);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .logo-area h1 {
+            color: var(--amrita-blue);
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .controls {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .search-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+        }
+
+        #facultySearch {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        #facultySearch:focus {
+            border-color: var(--amrita-accent);
+            box-shadow: 0 0 0 4px rgba(180, 151, 90, 0.1);
+        }
+
+        .directory-grid {
+            max-width: 1200px;
+            margin: 0 auto 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 0 20px;
+        }
+
+        .faculty-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .faculty-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -10px rgba(0,0,0,0.1);
+            border-color: var(--amrita-accent);
+        }
+
+        .dept-tag {
+            display: inline-block;
+            background: #f1f5f9;
+            color: var(--amrita-blue);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .faculty-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .designation {
+            color: var(--amrita-accent);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .contact-info {
+            border-top: 1px solid #f1f5f9;
+            padding-top: 15px;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .contact-info div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .contact-info i {
+            color: var(--amrita-accent);
+            width: 15px;
+        }
+
+        footer {
+            background: var(--amrita-blue);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="home-btn" title="Back to Home">
+        <i class="fas fa-home"></i>
+    </a>
+
+    <header>
+        <div class="logo-area">
+            <i class="fas fa-hospital-user" style="font-size: 2rem; color: var(--amrita-accent); margin-bottom: 10px;"></i>
+            <h1>Amrita Hospital, Kochi</h1>
+            <p style="color: #64748b;">Specialist Directory & Clinical Faculty</p>
+        </div>
+    </header>
+
+    <section class="controls">
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="facultySearch" placeholder="Search by name, specialty, or designation...">
+        </div>
+    </section>
+
+    <div class="directory-grid" id="directory"></div>
+
+    <footer>
+        <p>&copy; 2026 Nirog | Amrita Vishwa Vidyapeetham </p>
+    </footer>
+
+    <script>
+        const facultyData = [
+            { name: "Dr. Prem Nair", dept: "Gastroenterology", role: "Medical Director", email: "premnair@aims.amrita.edu" },
+            { name: "Dr. K. U. Natarajan", dept: "Cardiology", role: "Professor & HOD", email: "cardiology@aims.amrita.edu" },
+            { name: "Dr. Sudhindran S.", dept: "Gastrointestinal Surgery", role: "Professor & HOD", email: "gisurgery@aims.amrita.edu" },
+            { name: "Dr. Sanjeev K. Singh", dept: "Hospital Administration", role: "Medical Superintendent", email: "ms@aims.amrita.edu" },
+            { name: "Dr. P. Ramkumar", dept: "Orthopaedics", role: "Professor & HOD", email: "ortho@aims.amrita.edu" },
+            { name: "Dr. Vivek Kumar", dept: "Neurology", role: "Professor & HOD", email: "neuro@aims.amrita.edu" },
+            { name: "Dr. Balagopal V. V.", dept: "General Surgery", role: "Professor & HOD", email: "surgery@aims.amrita.edu" },
+            { name: "Dr. C. Jayakumar", dept: "Paediatrics", role: "Professor & HOD", email: "paediatrics@aims.amrita.edu" },
+            { name: "Dr. Radhamany K.", dept: "Obstetrics & Gynaecology", role: "Professor & HOD", email: "obg@aims.amrita.edu" },
+            { name: "Dr. Ashoke K. Singh", dept: "Endocrinology", role: "Senior Consultant", email: "endo@aims.amrita.edu" },
+            { name: "Dr. Gopalakrishnan", dept: "Ophthalmology", role: "Professor & HOD", email: "eye@aims.amrita.edu" },
+            { name: "Dr. M. G. K. Pillai", dept: "General Medicine", role: "Professor & HOD", email: "genmed@aims.amrita.edu" },
+            { name: "Dr. S. K. Ramaswamy", dept: "Dermatology", role: "Professor & HOD", email: "derm@aims.amrita.edu" },
+            { name: "Dr. Lakshmi S.", dept: "Anesthesia", role: "Professor & HOD", email: "anesthesia@aims.amrita.edu" },
+            { name: "Dr. Harish Kumar", dept: "Endocrinology", role: "Professor & HOD", email: "endo@aims.amrita.edu" }
+        ];
+
+        const directory = document.getElementById('directory');
+        const searchInput = document.getElementById('facultySearch');
+
+        function displayFaculty(data) {
+            directory.innerHTML = '';
+            data.forEach(member => {
+                const card = document.createElement('div');
+                card.className = 'faculty-card';
+                card.innerHTML = `
+                    <span class="dept-tag">${member.dept}</span>
+                    <h3>${member.name}</h3>
+                    <div class="designation">${member.role}</div>
+                    <div class="contact-info">
+                        <div><i class="fas fa-envelope"></i> ${member.email}</div>
+                        <div><i class="fas fa-location-dot"></i> Amrita Lane, Ponekkara, Kochi</div>
+                    </div>
+                `;
+                directory.appendChild(card);
+            });
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = facultyData.filter(m => 
+                m.name.toLowerCase().includes(term) || 
+                m.dept.toLowerCase().includes(term) ||
+                m.role.toLowerCase().includes(term)
+            );
+            displayFaculty(filtered);
+        });
+
+        displayFaculty(facultyData);
+    </script>
+</body>
+</html>

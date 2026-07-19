@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIROG | Find Nearest Hospital</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- DESIGN STYLES --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            /* Gradient background inspired by the image */
+            background: linear-gradient(135deg, #4b306a 0%, #a2648e 50%, #d88a91 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Decorative Background Elements (The "Desert/Mountain" feel) */
+        body::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 30%;
+            background: url('https://www.transparenttextures.com/patterns/cubes.png'), 
+                        linear-gradient(to top, #2e1a47, transparent);
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        .card {
+            background: #fdfdfd;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
+            height: 180px;
+            background: url('https://www.indiaspend.com/h-upload/old_images/344743-620rural.jpgs');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .card-header::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(75, 48, 106, 0.4), rgba(253, 253, 253, 1));
+        }
+
+        .card-body {
+            padding: 30px 40px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        p {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ec9faf;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: none;
+            background: #ffe0e6;
+            border-radius: 50px;
+            font-size: 14px;
+            color: #555;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            background: #ffd0da;
+            box-shadow: 0 0 10px rgba(236, 159, 175, 0.3);
+        }
+
+        .btn-find {
+            width: 100%;
+            padding: 15px;
+            background: #7a5a9e;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(122, 90, 158, 0.4);
+        }
+
+        .btn-find:hover {
+            background: #624483;
+            transform: translateY(-2px);
+        }
+
+        .footer-link {
+            margin-top: 20px;
+            display: block;
+            font-size: 13px;
+            color: #888;
+            text-decoration: none;
+        }
+
+        /* --- GEOLOCATION STATUS PULSE --- */
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            background-color: #28a745;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            box-shadow: 0 0 0 rgba(40, 167, 69, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="card-header"></div>
+        <div class="card-body">
+            <h1>Hospital Finder</h1>
+            <p><span class="status-dot" id="dot"></span><span id="statusText">Detecting Location...</span></p>
+
+            <div class="input-group">
+                <i class="fas fa-map-marker-alt"></i>
+                <input type="text" id="userLat" placeholder="Latitude" readonly title="Auto-fetched">
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-compass"></i>
+                <input type="text" id="userLon" placeholder="Longitude" readonly title="Auto-fetched">
+            </div>
+
+            <button class="btn-find" onclick="findNearestHospital()">Find Hospital</button>
+
+            <a href="home.html" class="footer-link">Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        // Data Structure
+        const hospitals = [
+            { name: "Govt. Medical College, Thiruvananthapuram", lat: 8.5239, lon: 76.9272, url: "hospitalA.html" },
+            { name: "Amrita Hospital, Kochi", lat: 10.0327, lon: 76.2921, url: "hospitalB.html" },
+            { name: "Govt. Medical College, Kozhikode (Calicut)", lat: 11.2720, lon: 75.8354, url: "hospitalC.html" }
+        ];
+
+        // Logic
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            // Using standard Euclidean distance for simplicity in this logic
+            return Math.sqrt(Math.pow(lat2 - lat1, 2) + Math.pow(lon2 - lon1, 2));
+        }
+
+        function findNearestHospital() {
+            const userLat = parseFloat(document.getElementById("userLat").value);
+            const userLon = parseFloat(document.getElementById("userLon").value);
+
+            if (isNaN(userLat) || isNaN(userLon)) {
+                alert("Please wait for location to be detected or check browser permissions.");
+                return;
+            }
+
+            let nearestHospital = null;
+            let minDistance = Infinity;
+
+            hospitals.forEach(hospital => {
+                const distance = calculateDistance(userLat, userLon, hospital.lat, hospital.lon);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestHospital = hospital;
+                }
+            });
+
+            if (nearestHospital) {
+                // In a real app, this would redirect. For demo, we alert and redirect.
+                alert("Nearest facility found: " + nearestHospital.name);
+                window.location.href = nearestHospital.url; 
+            }
+        }
+
+        function getUserLocation() {
+            const statusText = document.getElementById("statusText");
+            const dot = document.getElementById("dot");
+
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        document.getElementById("userLat").value = lat.toFixed(4);
+                        document.getElementById("userLon").value = lon.toFixed(4);
+                        statusText.innerText = "Location Detected";
+                        dot.style.backgroundColor = "#28a745";
+                    },
+                    (error) => {
+                        statusText.innerText = "Access Denied";
+                        dot.style.backgroundColor = "#dc3545";
+                        alert("Error getting location: " + error.message);
+                    }
+                );
+            } else {
+                statusText.innerText = "Not Supported";
+                alert("Geolocation is not supported by your browser.");
+            }
+        }
+
+        // Initialize on load
+        window.onload = getUserLocation;
+    </script>
+</body>
+</html>
