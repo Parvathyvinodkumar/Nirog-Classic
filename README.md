@@ -107,16 +107,17 @@ Amrita Vishwa Vidyapeetham
 
 ---
 
-## ⚠️ Note
-
-This is a frontend-only prototype created for educational purposes.
-Authentication and data handling are simulated using client-side JavaScript and are not intended for production use.
-
 
 ## 🌱 Project Journey
 
 NIROG was my first web development project, created during the first year of my B.Tech in Computer Science and Engineering.
 
 While it is a frontend-only prototype, it marked the beginning of my journey into software development and inspired me to build a more advanced full-stack version of the platform using modern technologies.
+
+## ⚠️ Note
+
+This is a frontend-only prototype created for educational purposes.
+Authentication and data handling are simulated using client-side JavaScript and are not intended for production use.
+
 
 > This repository represents the original prototype developed during my first year of engineering.
